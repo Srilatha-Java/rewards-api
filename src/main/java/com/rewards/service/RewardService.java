@@ -1,62 +1,26 @@
 package com.rewards.service;
 
 import com.rewards.dto.RewardResponseDTO;
-import com.rewards.entity.Customer;
-import com.rewards.entity.Transaction;
-import com.rewards.exception.CustomerNotFoundException;
-import com.rewards.repository.CustomerRepository;
-import com.rewards.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * Service class responsible for reward calculations.
+ * Service interface for reward calculation operations.
  */
-@Service
-@RequiredArgsConstructor
-public class RewardService {
-
-    private final CustomerRepository customerRepository;
-    private final TransactionRepository transactionRepository;
-    private final RewardCalculator rewardCalculator;
+public interface RewardService {
 
     /**
-     * Returns reward points for a customer for last 3 months.
+     * Calculates reward points for a specific customer.
      *
-     * @param customerId customer id
-     * @return reward response DTO
+     * @param customerId the customer ID
+     * @return reward response DTO containing monthly and total points
      */
-    public RewardResponseDTO getRewards(Long customerId) {
-
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() ->
-                        new CustomerNotFoundException("Customer not found: " + customerId));
-
-        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-
-        List<Transaction> transactions =
-                transactionRepository.findByCustomerIdAndTransactionDateAfter(
-                        customerId, threeMonthsAgo);
-
-        Map<String, Integer> monthlyPoints =
-                transactions.stream()
-                        .collect(Collectors.groupingBy(
-                                t -> t.getTransactionDate().getMonth().toString(),
-                                Collectors.summingInt(
-                                        t -> rewardCalculator.calculate(t.getAmount())
-                                )
-                        ));
-
-        int totalPoints = monthlyPoints.values()
-                .stream()
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        return new RewardResponseDTO(customerId, monthlyPoints, totalPoints);
-    }
+    RewardResponseDTO getRewards(Long customerId);
+    /**
+     * Retrieves reward details for all customers.
+     *
+     * @return list of reward response DTOs
+     */
+    List<RewardResponseDTO> getAllRewards();
 }
+

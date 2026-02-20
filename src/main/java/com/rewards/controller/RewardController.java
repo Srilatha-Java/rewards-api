@@ -1,10 +1,16 @@
 package com.rewards.controller;
 
 import com.rewards.dto.RewardResponseDTO;
-import com.rewards.service.RewardService;
+import com.rewards.service.RewardServiceImpl;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 /**
  * REST controller for reward endpoints.
@@ -14,20 +20,31 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RewardController {
 
-    private final RewardService rewardService;
+    private final RewardServiceImpl rewardService;
 
     /**
-     * Fetch rewards for a given customer.
+     * Fetch reward details for a specific customer.
+     *
+     * @param customerId the unique ID of the customer
+     * @return reward details including monthly and total points
      */
     @GetMapping("/{customerId}")
-    public ResponseEntity<RewardResponseDTO> getRewards(@PathVariable Long customerId) {
+    public ResponseEntity<RewardResponseDTO> getRewards(
+            @PathVariable @NotNull Long customerId) {
 
-        RewardResponseDTO response = rewardService.getRewards(customerId);
-
-        if (response == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(rewardService.getRewards(customerId));
     }
+
+
+    /**
+     * Fetch reward details for all customers.
+     *
+     * @return list of reward details for all customers
+     */
+    @GetMapping
+    public ResponseEntity<List<RewardResponseDTO>> getAllRewards() {
+        return ResponseEntity.ok(rewardService.getAllRewards());
+    }
+
+
 }
