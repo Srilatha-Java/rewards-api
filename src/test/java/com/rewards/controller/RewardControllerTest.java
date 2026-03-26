@@ -2,7 +2,8 @@ package com.rewards.controller;
 
 import com.rewards.dto.RewardResponseDTO;
 import com.rewards.exception.CustomerNotFoundException;
-import com.rewards.service.RewardServiceImpl;
+import com.rewards.service.RewardService;
+import com.rewards.service.impl.RewardServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +53,18 @@ class RewardControllerTest {
     }
 
     @Test
-    void shouldReturn404WhenCustomerNotFound() throws Exception {
+    void shouldHandleEmptyResponse() throws Exception {
 
-        Mockito.when(rewardService.getRewards(999L))
-                .thenThrow(new CustomerNotFoundException("Customer not found"));
+        RewardResponseDTO dto = new RewardResponseDTO();
+            dto.setCustomerId(1L);
+            dto.setMonthlyPoints(new HashMap<>());
+            dto.setTotalPoints(0);
 
-        mockMvc.perform(get("/api/rewards/999"))
-                .andExpect(status().isNotFound());
+        Mockito.when(rewardService.getRewards(1L)).thenReturn(dto);
+
+        mockMvc.perform(get("/api/rewards/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPoints").value(0));
     }
 }
 

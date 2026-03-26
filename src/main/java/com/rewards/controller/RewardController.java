@@ -1,7 +1,7 @@
 package com.rewards.controller;
 
 import com.rewards.dto.RewardResponseDTO;
-import com.rewards.service.RewardServiceImpl;
+import com.rewards.service.impl.RewardServiceImpl;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

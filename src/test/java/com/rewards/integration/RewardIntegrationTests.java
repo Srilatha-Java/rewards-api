@@ -8,34 +8,44 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Full integration test for Reward APIs.
- * Loads entire Spring context and verifies end-to-end behavior.
+ * Integration tests for Reward APIs.
+ *
+ * This test loads full Spring Boot context and verifies
+ * end-to-end request flow including controller, service,
+ * repository and database layers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class RewardIntegrationTest {
+class RewardIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Test: Valid customer with transactions
+     */
     @Test
     void shouldReturnRewardsForValidCustomer() throws Exception {
 
         mockMvc.perform(get("/api/rewards/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerId").value(1))
-                .andExpect(jsonPath("$.totalPoints").exists());
+                .andExpect(jsonPath("$.totalPoints").exists())
+                .andExpect(jsonPath("$.monthlyPoints").exists());
     }
 
+    /**
+     * Test: Invalid customer → should return 404
+     */
     @Test
     void shouldReturn404ForInvalidCustomer() throws Exception {
 
         mockMvc.perform(get("/api/rewards/9999"))
                 .andExpect(status().isNotFound());
     }
+
 }

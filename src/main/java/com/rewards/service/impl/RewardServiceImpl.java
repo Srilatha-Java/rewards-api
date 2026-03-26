@@ -1,4 +1,4 @@
-package com.rewards.service;
+package com.rewards.service.impl;
 
 import com.rewards.dto.RewardResponseDTO;
 import com.rewards.entity.Customer;
@@ -6,6 +6,8 @@ import com.rewards.entity.Transaction;
 import com.rewards.exception.CustomerNotFoundException;
 import com.rewards.repository.CustomerRepository;
 import com.rewards.repository.TransactionRepository;
+import com.rewards.service.RewardCalculator;
+import com.rewards.service.RewardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +28,13 @@ public class RewardServiceImpl implements RewardService {
     private final RewardCalculator rewardCalculator;
 
     /**
-     * Returns reward points for a customer for last 3 months.
+     * Fetches reward points for a given customer.
      *
-     * @param customerId customer id
-     * @return reward response DTO
+     * @param customerId unique identifier of customer
+     * @return RewardResponseDTO containing monthly and total points
+     * @throws CustomerNotFoundException if customer does not exist
      */
+    @Override
     public RewardResponseDTO getRewards(Long customerId) {
 
         Customer customer = customerRepository.findById(customerId)
@@ -59,6 +63,11 @@ public class RewardServiceImpl implements RewardService {
         return new RewardResponseDTO(customerId, monthlyPoints, totalPoints);
     }
 
+    /**
+     * Fetch reward details for all customers.
+     *
+     * @return list of reward responses
+     */
     @Override
     public List<RewardResponseDTO> getAllRewards() {
         List<Customer> customers = customerRepository.findAll();
