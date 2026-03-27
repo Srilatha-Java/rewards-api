@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,24 +23,28 @@ class TransactionRepositoryTest {
     private CustomerRepository customerRepository;
 
     @Test
-    void shouldFetchTransactionsAfterDate() {
+    void shouldFetchTransactionsBetweenDates() {
 
         Customer customer = new Customer();
         customer.setName("Test User");
 
-        customer = customerRepository.save(customer); // auto ID
+        customer = customerRepository.save(customer);
 
         Transaction t1 = new Transaction();
         t1.setCustomer(customer);
-        t1.setAmount(120.0);
+        t1.setAmount(BigDecimal.valueOf(120));
         t1.setTransactionDate(LocalDate.now().minusDays(10));
 
         transactionRepository.save(t1);
 
+        LocalDate start = LocalDate.now().minusMonths(1);
+        LocalDate end = LocalDate.now();
+
         List<Transaction> result =
-                transactionRepository.findByCustomerIdAndTransactionDateAfter(
+                transactionRepository.findByCustomerIdAndTransactionDateBetween(
                         customer.getId(),
-                        LocalDate.now().minusMonths(1)
+                        start,
+                        end
                 );
 
         assertFalse(result.isEmpty());
@@ -48,11 +53,16 @@ class TransactionRepositoryTest {
     @Test
     void shouldReturnEmptyWhenNoTransactionsFound() {
 
+        LocalDate start = LocalDate.now().minusMonths(1);
+        LocalDate end = LocalDate.now();
+
         List<Transaction> result =
-                transactionRepository.findByCustomerIdAndTransactionDateAfter(
-                        999L, LocalDate.now());
+                transactionRepository.findByCustomerIdAndTransactionDateBetween(
+                        999L,
+                        start,
+                        end
+                );
 
         assertTrue(result.isEmpty());
     }
-
 }

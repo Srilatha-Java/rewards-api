@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -32,10 +32,9 @@ public class Transaction {
 
     @NotNull(message = "Amount cannot be null")
     @Positive(message = "Amount must be greater than 0")
-    private Double amount;
+    private BigDecimal amount;
 
     @NotNull(message = "Transaction date cannot be null")
-    @PastOrPresent(message = "Transaction date cannot be future")
     private LocalDate transactionDate;
 
     @ManyToOne

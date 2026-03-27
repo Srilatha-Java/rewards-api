@@ -1,7 +1,7 @@
 package com.rewards.controller;
 
 import com.rewards.dto.RewardResponseDTO;
-import com.rewards.service.impl.RewardServiceImpl;
+import com.rewards.service.RewardService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RewardControllerTest {
 
     @Mock
-    private RewardServiceImpl rewardService;
+    private RewardService rewardService;
 
     @InjectMocks
     private RewardController rewardController;

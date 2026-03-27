@@ -13,12 +13,16 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     /**
-     * Fetches transactions of a customer after the given date.
+     * Fetches transactions of a customer within a date range.
      *
      * @param customerId the customer ID
-     * @param date the start date filter
+     * @param start start date (inclusive)
+     * @param end end date (inclusive)
      * @return list of transactions
      */
-    List<Transaction> findByCustomerIdAndTransactionDateAfter(
-            Long customerId, LocalDate date);
+    List<Transaction> findByCustomerIdAndTransactionDateBetween(
+            Long customerId,
+            LocalDate start,
+            LocalDate end
+    );
 }

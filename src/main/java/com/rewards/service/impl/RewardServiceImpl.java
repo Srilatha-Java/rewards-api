@@ -27,13 +27,6 @@ public class RewardServiceImpl implements RewardService {
     private final TransactionRepository transactionRepository;
     private final RewardCalculator rewardCalculator;
 
-    /**
-     * Fetches reward points for a given customer.
-     *
-     * @param customerId unique identifier of customer
-     * @return RewardResponseDTO containing monthly and total points
-     * @throws CustomerNotFoundException if customer does not exist
-     */
     @Override
     public RewardResponseDTO getRewards(Long customerId) {
 
@@ -41,11 +34,17 @@ public class RewardServiceImpl implements RewardService {
                 .orElseThrow(() ->
                         new CustomerNotFoundException("Customer not found: " + customerId));
 
-        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
+        LocalDate start = LocalDate.now().minusMonths(3).withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
 
         List<Transaction> transactions =
-                transactionRepository.findByCustomerIdAndTransactionDateAfter(
-                        customerId, threeMonthsAgo);
+                transactionRepository.findByCustomerIdAndTransactionDateBetween(
+                        customerId, start, end
+                );
+
+        if (transactions.isEmpty()) {
+            return new RewardResponseDTO(customerId, Map.of(), 0);
+        }
 
         Map<String, Integer> monthlyPoints =
                 transactions.stream()
@@ -63,11 +62,6 @@ public class RewardServiceImpl implements RewardService {
         return new RewardResponseDTO(customerId, monthlyPoints, totalPoints);
     }
 
-    /**
-     * Fetch reward details for all customers.
-     *
-     * @return list of reward responses
-     */
     @Override
     public List<RewardResponseDTO> getAllRewards() {
         List<Customer> customers = customerRepository.findAll();
