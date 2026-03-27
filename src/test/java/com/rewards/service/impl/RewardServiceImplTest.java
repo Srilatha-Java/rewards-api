@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -22,8 +21,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RewardServiceImplTest {
@@ -57,7 +61,6 @@ class RewardServiceImplTest {
         when(customerRepository.findById(1L))
                 .thenReturn(Optional.of(customer));
 
-        // ✅ FIXED LINE
         when(transactionRepository.findByCustomerIdAndTransactionDateBetween(
                 eq(1L), any(), any()))
                 .thenReturn(Collections.emptyList());
@@ -107,7 +110,6 @@ class RewardServiceImplTest {
         assertEquals(0, response.getTotalPoints());
     }
 
-    // ✅ Test: Future transaction (still returned by repo mock)
     @Test
     void shouldIgnoreFutureTransactions() {
 
@@ -132,7 +134,6 @@ class RewardServiceImplTest {
         assertNotNull(response);
     }
 
-    // ✅ Test: Monthly grouping
     @Test
     void shouldCalculateMonthlyPoints() {
 
@@ -162,7 +163,7 @@ class RewardServiceImplTest {
         RewardResponseDTO response = rewardService.getRewards(1L);
 
         assertEquals(2, response.getMonthlyPoints().size());
-        assertEquals(120, response.getTotalPoints()); // 90 + 30
+        assertEquals(120, response.getTotalPoints());
     }
 
     @Test

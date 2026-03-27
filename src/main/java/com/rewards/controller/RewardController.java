@@ -2,7 +2,6 @@ package com.rewards.controller;
 
 import com.rewards.dto.RewardResponseDTO;
 import com.rewards.service.RewardService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +31,7 @@ public class RewardController {
      */
     @GetMapping("/{customerId}")
     public ResponseEntity<RewardResponseDTO> getRewards(
-            @PathVariable @NotNull Long customerId) {
+            @PathVariable Long customerId) {
 
         return ResponseEntity.ok(rewardService.getRewards(customerId));
     }

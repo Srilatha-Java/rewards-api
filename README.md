@@ -42,10 +42,8 @@ A Spring Boot REST API that calculates customer reward points based on transacti
 File: `src/main/resources/data.sql`
 
 ```sql
--- Customer (ID is auto-generated)
 INSERT INTO customer (name) VALUES ('Srilatha');
 
--- Transactions (last 3 months)
 INSERT INTO transactions (customer_id, amount, transaction_date)
 VALUES (1, 120, CURRENT_DATE - 10);
 
